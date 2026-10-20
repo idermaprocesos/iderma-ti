@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="MesaAyudaTI.Pages.TicketsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MesaAyudaTI.Models"
+    NavigationCacheMode="Required"
+    mc:Ignorable="d">
+
+    <Grid Padding="24,12,24,16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <StackPanel Spacing="2">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Tickets" />
+                <TextBlock
+                    x:Name="CountText"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="0 tickets" />
+            </StackPanel>
+            <Button
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Click="NewTicket_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                ToolTipService.ToolTip="Ctrl+N">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                        Glyph="&#xE710;" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                        Text="Nuevo ticket" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Padding="12" Style="{StaticResource CardBorderStyle}">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Buscar por título, código o solicitante" TextChanged="SearchBox_TextChanged">
+                        <AutoSuggestBox.QueryIcon>
+                            <SymbolIcon Symbol="Find" />
+                        </AutoSuggestBox.QueryIcon>
+                    </AutoSuggestBox>
+
+                    <Grid Grid.Row="1" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox
+                            x:Name="StatusFilter"
+                            HorizontalAlignment="Stretch"
+                            DisplayMemberPath="Label"
+                            SelectionChanged="FilterSelection_Changed" />
+                        <ComboBox
+                            x:Name="PriorityFilter"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            DisplayMemberPath="Label"
+                            SelectionChanged="FilterSelection_Changed" />
+                    </Grid>
+
+                    <CheckBox
+                        x:Name="MineOnly"
+                        Grid.Row="2"
+                        Checked="MineOnly_Changed"
+                        Content="Solo mis tickets"
+                        Unchecked="MineOnly_Changed" />
+
+                    <Grid Grid.Row="3">
+                        <ListView
+                            x:Name="TicketsList"
+                            Background="Transparent"
+                            SelectionChanged="TicketsList_SelectionChanged"
+                            SelectionMode="Single">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="4,2" />
+                                    <Setter Property="Margin" Value="0,1" />
+                                    <Setter Property="CornerRadius" Value="4" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Ticket">
+                                    <Grid Padding="8,8" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="4" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border
+                                            Width="4"
+                                            VerticalAlignment="Stretch"
+                                            Background="{x:Bind Priority, Mode=OneWay, Converter={StaticResource PriorityBrushConverter}}"
+                                            CornerRadius="2" />
+                                        <StackPanel Grid.Column="1" Spacing="4">
+                                            <Grid>
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind Code}" />
+                                                <Border
+                                                    Padding="8,2"
+                                                    HorizontalAlignment="Right"
+                                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                                    CornerRadius="4">
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{x:Bind Status, Mode=OneWay, Converter={StaticResource StatusBrushConverter}}"
+                                                        Text="{x:Bind StatusLabel, Mode=OneWay}" />
+                                                </Border>
+                                            </Grid>
+                                            <TextBlock
+                                                MaxLines="2"
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{x:Bind Title, Mode=OneWay}"
+                                                TextWrapping="Wrap" />
+                                            <TextBlock
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="{x:Bind MetaLine, Mode=OneWay}"
+                                                TextWrapping="Wrap" />
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind AssigneeLabel, Mode=OneWay}" />
+                                                <TextBlock
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="·" />
+                                                <TextBlock
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind NotesLabel, Mode=OneWay}" />
+                                                <TextBlock
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="·" />
+                                                <TextBlock
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource RelativeTimeConverter}}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <StackPanel
+                            x:Name="EmptyList"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Spacing="8"
+                            Visibility="Collapsed">
+                            <FontIcon
+                                HorizontalAlignment="Center"
+                                FontSize="32"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Glyph="&#xE721;" />
+                            <TextBlock
+                                x:Name="EmptyListTitle"
+                                HorizontalAlignment="Center"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="No hay tickets" />
+                            <TextBlock
+                                x:Name="EmptyListText"
+                                MaxWidth="260"
+                                HorizontalAlignment="Center"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Crea el primer ticket para que el equipo de TI lo atienda."
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                            <Button
+                                x:Name="EmptyListButton"
+                                HorizontalAlignment="Center"
+                                Click="NewTicket_Click"
+                                Content="Nuevo ticket" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1" Padding="0" Style="{StaticResource CardBorderStyle}">
+                <Grid>
+                    <StackPanel
+                        x:Name="EmptyDetail"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="8">
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            FontSize="36"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Glyph="&#xE8A5;" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="Selecciona un ticket" />
+                        <TextBlock
+                            MaxWidth="320"
+                            HorizontalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Aquí puedes asignarlo, cambiar el estado y dejar notas para el equipo."
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <Grid x:Name="DetailRoot" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel>
+                            <Border Height="4" Background="{Binding Priority, Converter={StaticResource PriorityBrushConverter}}" />
+                            <StackPanel Margin="24,16,24,8" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{Binding Code}" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Style="{StaticResource TitleTextBlockStyle}"
+                                Text="{Binding Title}"
+                                TextWrapping="Wrap" />
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border Padding="8,3" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4">
+                                    <TextBlock
+                                        FontWeight="SemiBold"
+                                        Foreground="{Binding Status, Converter={StaticResource StatusBrushConverter}}"
+                                        Text="{Binding StatusLabel}" />
+                                </Border>
+                                <Border Padding="8,3" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4">
+                                    <TextBlock
+                                        FontWeight="SemiBold"
+                                        Foreground="{Binding Priority, Converter={StaticResource PriorityBrushConverter}}"
+                                        Text="{Binding PriorityLabel}" />
+                                </Border>
+                                <Border Padding="8,3" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4">
+                                    <TextBlock Text="{Binding CategoryLabel}" />
+                                </Border>
+                            </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <ScrollViewer x:Name="DetailScroll" Grid.Row="1" Padding="24,8,24,16">
+                            <StackPanel Spacing="16">
+                                <Grid ColumnSpacing="16" RowSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Solicitante" />
+                                        <TextBlock IsTextSelectionEnabled="True" Text="{Binding Requester}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Área" />
+                                        <TextBlock IsTextSelectionEnabled="True" Text="{Binding Department}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Spacing="2">
+                                        <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Equipo" />
+                                        <TextBlock IsTextSelectionEnabled="True" Text="{Binding AssetLabel}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+                                        <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Asignado a" />
+                                        <TextBlock Text="{Binding AssigneeLabel}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2" Spacing="2">
+                                        <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Creado" />
+                                        <TextBlock Text="{Binding CreatedAt, Converter={StaticResource LongDateConverter}}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2" Grid.Column="1" Spacing="2">
+                                        <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Actualizado" />
+                                        <TextBlock Text="{Binding UpdatedAt, Converter={StaticResource LongDateConverter}}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <StackPanel x:Name="ResolvedBlock" Spacing="2" Visibility="Collapsed">
+                                    <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Cierre" />
+                                    <TextBlock x:Name="ResolvedText" />
+                                </StackPanel>
+
+                                <StackPanel Spacing="6">
+                                    <TextBlock Style="{StaticResource MetaCaptionStyle}" Text="Descripción" />
+                                    <Border Padding="14" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="8">
+                                        <TextBlock
+                                            IsTextSelectionEnabled="True"
+                                            Text="{Binding Description}"
+                                            TextWrapping="Wrap" />
+                                    </Border>
+                                </StackPanel>
+
+                                <StackPanel Spacing="8">
+                                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Notas del equipo" />
+                                    <TextBlock
+                                        x:Name="EmptyNotes"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="Todavía no hay notas. Deja contexto para quien tome el ticket."
+                                        TextWrapping="Wrap" />
+                                    <ItemsControl ItemsSource="{Binding Comments}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:TicketComment">
+                                                <StackPanel Margin="0,0,0,12" Spacing="4">
+                                                    <Grid>
+                                                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Author}" />
+                                                        <TextBlock
+                                                            HorizontalAlignment="Right"
+                                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                                            Text="{x:Bind CreatedAt, Converter={StaticResource RelativeTimeConverter}}" />
+                                                    </Grid>
+                                                    <TextBlock
+                                                        IsTextSelectionEnabled="True"
+                                                        Text="{x:Bind Body}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <Border
+                            Grid.Row="2"
+                            Padding="24,16"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="0,1,0,0">
+                            <StackPanel Spacing="12">
+                                <InfoBar x:Name="DetailInfo" IsClosable="True" IsOpen="False" />
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox
+                                        x:Name="StatusBox"
+                                        HorizontalAlignment="Stretch"
+                                        DisplayMemberPath="Label"
+                                        Header="Estado"
+                                        SelectionChanged="StatusBox_SelectionChanged" />
+                                    <ComboBox
+                                        x:Name="PriorityBox"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        DisplayMemberPath="Label"
+                                        Header="Prioridad"
+                                        SelectionChanged="PriorityBox_SelectionChanged" />
+                                    <ComboBox
+                                        x:Name="AssigneeBox"
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Stretch"
+                                        Header="Asignado a"
+                                        SelectionChanged="AssigneeBox_SelectionChanged" />
+                                    <Button
+                                        x:Name="AssignMeButton"
+                                        Grid.Column="3"
+                                        MinWidth="120"
+                                        VerticalAlignment="Bottom"
+                                        Click="AssignMe_Click"
+                                        Content="Asignarme" />
+                                </Grid>
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        x:Name="NoteBox"
+                                        AcceptsReturn="True"
+                                        Header="Nota para el equipo"
+                                        KeyDown="NoteBox_KeyDown"
+                                        MaxLength="2000"
+                                        PlaceholderText="Qué se revisó, qué falta o a quién se escaló"
+                                        TextWrapping="Wrap" />
+                                    <Button
+                                        Grid.Column="1"
+                                        VerticalAlignment="Bottom"
+                                        Click="AddNote_Click"
+                                        Content="Agregar nota"
+                                        Style="{StaticResource AccentButtonStyle}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

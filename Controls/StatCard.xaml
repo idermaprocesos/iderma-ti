@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="MesaAyudaTI.Controls.StatCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    mc:Ignorable="d">
+    <Border Style="{StaticResource CardBorderStyle}">
+        <Grid ColumnSpacing="14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Width="44"
+                Height="44"
+                VerticalAlignment="Center"
+                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                CornerRadius="22">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{Binding Tint, ElementName=Root}"
+                    Glyph="{Binding Glyph, ElementName=Root}" />
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock
+                    FontSize="28"
+                    FontWeight="SemiBold"
+                    Text="{Binding Value, ElementName=Root}" />
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding Label, ElementName=Root}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

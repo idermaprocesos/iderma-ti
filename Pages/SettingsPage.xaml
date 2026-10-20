@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="MesaAyudaTI.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    NavigationCacheMode="Required"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel MaxWidth="860" Padding="32,20,32,32" HorizontalAlignment="Left" Spacing="16">
+            <StackPanel Spacing="4">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Preferencias" />
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="La aplicación sigue el tema claro u oscuro de Windows."
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <InfoBar x:Name="PageInfo" IsClosable="True" IsOpen="False" />
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Sesión" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Este nombre firma las notas y se usa al pulsar Asignarme. Si no está en el equipo, se agrega."
+                        TextWrapping="Wrap" />
+                    <TextBox x:Name="SessionBox" Header="Técnico en sesión" PlaceholderText="Tu nombre" />
+                    <Button
+                        HorizontalAlignment="Left"
+                        Click="SaveSession_Click"
+                        Content="Guardar sesión"
+                        Style="{StaticResource AccentButtonStyle}" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Datos en este equipo" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Los tickets no salen de este PC. El archivo se puede copiar o respaldar desde esta ruta:"
+                        TextWrapping="Wrap" />
+                    <TextBox
+                        x:Name="PathBox"
+                        Header="Archivo"
+                        IsReadOnly="True"
+                        TextWrapping="Wrap" />
+                    <Button HorizontalAlignment="Left" Click="Reset_Click" Content="Restablecer datos de ejemplo" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
